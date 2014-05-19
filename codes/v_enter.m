@@ -59,7 +59,30 @@
         */
         //flash
 
-        //timer= [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(flash) userInfo:nil repeats:YES];
+        //定时器
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.76
+                                                 target:self
+                                               selector:@selector(liuye:)
+                                                        userInfo:nil
+                                                        repeats:NO];
+        
+        UIImageView *jqr = [self addImageView:self
+                                        image:@"et_yun.png"
+                                     position:CGPointMake(0, 0)
+                            ];
+        
+        [self startAnimation:jqr
+                        sPos:CGPointMake(jqr.center.x + 50, jqr.center.y)
+                        ePos:jqr.center
+                      sAlpha:0
+                      eAlpha:1
+                      sScale:CGPointMake(1, 1)
+                      eScale:CGPointMake(1, 1)
+                    duration:.5
+                       delay:2
+                      option:UIViewAnimationOptionAllowAnimatedContent
+         ];
+
         
         btnv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
         [self addSubview:btnv];
@@ -104,43 +127,30 @@
     return self;
 }
 
--(void)flash{
+-(void)liuye:(NSTimer *)theTimer{
+ 
     
-    UIImageView *jqr = [self addImageView:self
-                                    image:@"et_yun.png"
-                                 position:CGPointMake(0, 0)
-                        ];
+    if (! sf){
+        sf=[[iSequenceFrameView alloc] initWithFrame:CGRectMake(0, 0, 1024, 300)];
+        sf.animationView.image=[UIImage imageNamed:@"indx_1.png"];
+        [self addSubview:sf];
+        sf.delegate=self;
+        sf.time = 1.0/30.0;
+    }
     
-    [self startAnimation:jqr
-                    sPos:CGPointMake(jqr.center.x + 50, jqr.center.y)
-                    ePos:jqr.center
-                  sAlpha:0
-                  eAlpha:1
-                  sScale:CGPointMake(1, 1)
-                  eScale:CGPointMake(1, 1)
-                duration:.5
-                   delay:2
-                  option:UIViewAnimationOptionAllowAnimatedContent
-     ];
-    
-    
-    sf=[[iSequenceFrameView alloc] initWithFrame:CGRectMake(0, 0, 1024, 300)];
-    sf.animationView.image=[UIImage imageNamed:@"indx_1.png"];
-    [self addSubview:sf];
-    sf.delegate=self;
-    
-    sf.time = 1.0/30.0;
   
-    NSMutableArray *testArray=[NSMutableArray array];
-    [testArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+        NSMutableArray *testArray=[NSMutableArray array];
+        [testArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                           @"indx_",@"fileName",
                           @"1",@"dir",
                           @"0",@"startFrame",
                           @"abc",@"endPlace",
                           @"png",@"type",nil]];
     
-    [sf setStepArray:testArray];
-
+        [sf setStepArray:testArray];
+    
+ 
+    
 }
 
 
@@ -294,4 +304,6 @@
 
     }
 }
+
+
 @end

@@ -11,7 +11,9 @@
 @interface v_paiming : iPageView
 {
     ASIFormDataRequest *request;
-    UIImageView *p0,*p1;
+    UIImageView  * p0 ,*p1;
+    
+    UIImageView *im;
     float scalePos;
 }
 @end

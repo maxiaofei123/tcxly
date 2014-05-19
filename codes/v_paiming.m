@@ -11,7 +11,7 @@
 #import "UIView+iAnimationManager.h"
 #import "reg_0.h"
 #import "MainViewController.h"
-extern const NSString *avatarR;
+
 @implementation v_paiming
 
 - (id)initWithFrame:(CGRect)frame
@@ -25,16 +25,17 @@ extern const NSString *avatarR;
         
         p0=  [self addImageView:self
                           image:@"pm_ui.png"
-                       position:CGPointMake(60, 43)];//73
+                       position:CGPointMake(65, 80)];//73
         
         
         
         p1= [self addImageView:p0
                          image:@"pm_di.png"
-                      position:CGPointMake(70, 70)];
+                      position:CGPointMake(50, 145)];
         
      
-         p1.frame = CGRectMake(50, 140, 745, 510);
+         p1.frame = CGRectMake(50, 145, 745, 510);
+        
         [self addButton:self
                   image:@"back.png"
                position:CGPointMake(30, 30)
@@ -61,43 +62,46 @@ extern const NSString *avatarR;
     id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
     NSDictionary *items=(NSDictionary*)jsonObject;
     
-    
     NSArray *rank=(NSArray*)[items objectForKey:@"user_rankings"];
-    
     NSLog(@"rank count%d",[rank count]);
-    UIScrollView *sv = [[UIScrollView alloc]initWithFrame:CGRectMake(50, 140, 745, 510)];
-    [p1 addSubview:sv];
-     MainViewController *mvc = (MainViewController*)[self getManager];
+   
+    
+    MainViewController *mvc = (MainViewController*)[self getManager];
     rank = mvc.allArr;
     
+    UIScrollView *sv = [[UIScrollView alloc]initWithFrame:CGRectMake(115, 225, 745, 510)];
+    [self addSubview:sv];
+    [sv setContentSize:CGSizeMake(745, 130*10)];
+   // sv.showsHorizontalScrllIndicator = false;
+    //sv.showsVerticalScrollIndicator = false;
     for (int i=0; i<10; i++) {
         
         id aid=[[rank objectAtIndex:i] objectForKey:@"avatar_id"];
-        NSLog(@"paiming aid =%@",aid);
-        UIImageView *im;
+
        
-        UIView *txt = [[UIView alloc]initWithFrame:CGRectMake(0, 30 + i * 80 * 2, 745, 42)];
+        UIView *txt = [[UIView alloc]initWithFrame:CGRectMake(0,  i *130, 745, 130)];
         txt.tag = 2000 + i;
         [sv addSubview:txt];
+        
         [self addImageView:txt
                      image:@"qp_line.png"
-                  position:CGPointMake(0, 110)
+                  position:CGPointMake(0, 130)
          ];
-        [sv setContentSize:CGSizeMake(1024, (i + 1) * 80 * 2)];
+        
         
         
         
         if(aid && ![aid isKindOfClass:[NSNull class]])
         {
-            im=[self addImageView:p0
+            im=[self addImageView:txt
                             image:[NSString stringWithFormat:@"avatar_%@.jpg",aid]
-                         position:CGPointMake(40, 83+i*122)];
+                         position:CGPointMake(20, 10)];
         }
         else
         {
-           /* im=[self addImageView:p0
+            im=[self addImageView:txt
                             image:@"avatar_1.jpg"
-                         position:CGPointMake(40, 83+i*122)];*/
+                         position:CGPointMake(20, 10)];
         }
 
         
@@ -107,8 +111,8 @@ extern const NSString *avatarR;
         
         
         //名字
-        UILabel *un=[self addLabel:p0
-                             frame:CGRectMake(161, 115+i*120, 180, 50)
+        UILabel *un=[self addLabel:txt
+                             frame:CGRectMake(161, 115+i*130, 180, 50)
                               font:[UIFont boldSystemFontOfSize:20]
                               text:[[[rank objectAtIndex:i] objectForKey:@"user"] objectForKey:@"username"]
                              color:[UIColor blackColor]
@@ -119,11 +123,11 @@ extern const NSString *avatarR;
         
         
         //成绩
-        un=[self addLabel:p0
-                    frame:CGRectMake(368, 115+i*120, 180, 50)
-                     font:[UIFont boldSystemFontOfSize:20]
+        un=[self addLabel:txt
+                    frame:CGRectMake(317,  40, 100, 50)
+                     font:[UIFont fontWithName:@"Gretoon" size:24]
                      text:[NSString stringWithFormat:@"%d",[[[rank objectAtIndex:i] objectForKey:@"total_point"] integerValue]]
-                    color:[UIColor blackColor]
+                    color:[UIColor colorWithRed:85.f/255.f green:107.f/255.f blue:131.f/255.f alpha:1]
                       tag:0];
         
         un.textAlignment=UITextAlignmentCenter;
@@ -134,7 +138,7 @@ extern const NSString *avatarR;
         //排名
         
         un = [self addLabel:txt
-                       frame:CGRectMake(30, 0, 100, 24)
+                       frame:CGRectMake(465, 40, 100, 50)
                         font:[UIFont fontWithName:@"Gretoon" size:24]
                         text:[NSString stringWithFormat:@"第%d名", i + 1]
                         color:[UIColor colorWithRed:85.f/255.f green:107.f/255.f blue:131.f/255.f alpha:1]
@@ -142,15 +146,9 @@ extern const NSString *avatarR;
         un.shadowOffset=CGSizeMake(0, 1);
         
         un.shadowColor=[UIColor whiteColor];
-        
-        /*un=[self addLabel:p0
-                    frame:CGRectMake(572, 115+i*120, 121, 50)
-                     font:[UIFont boldSystemFontOfSize:20]
-                     text:[NSString stringWithFormat:@"第%d名",i+1]
-                    color:[UIColor blackColor]
-                      tag:0];*/
-        
+  
         un.textAlignment=UITextAlignmentCenter;
+
         
     }
     
@@ -162,7 +160,8 @@ extern const NSString *avatarR;
     
     
     
-    //第四名
+    //第四名/
+    /*
     if([myself count]>0)
     {
         
@@ -236,7 +235,7 @@ extern const NSString *avatarR;
                             p1.center=[self LeftPointToCenter:CGPointMake(70, 550) view:p1];
                          }];
     }
-    
+    */
     
     
 }
