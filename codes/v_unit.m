@@ -246,6 +246,8 @@
     int unitid = [[unArr[curvtag] objectForKey:@"id"] integerValue];
     
     [vq loadCurrentPage:unitid];
+    
+    
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", unitid] forKey:@"unitid"];
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", curvtag] forKey:@"menutag"];
     /* [self.superview fadeInView:self
@@ -603,7 +605,7 @@
     NSError *error = nil;
     id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
     
-    //  NSLog(@"Successfully deserialized  request =%@",[request responseString]);
+     NSLog(@"Successfully deserialized  request =%@",jsonObject);
     
     
     NSDictionary *deserializedDictionary = (NSDictionary *)jsonObject;
@@ -618,7 +620,6 @@
     
     units = [Dic objectForKey:@"units"];
     
-    NSLog(@"units =%@",units);
     int count = [units count];
     
     

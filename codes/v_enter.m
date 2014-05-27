@@ -24,7 +24,7 @@
     if (self) {
         // Initialization code
         
-        [self addBackground:@"enter_bg1.png"];
+        [self addBackground:@"enter_bg.png"];
         [self addButton:self
                   image:@"enter_st.png"
                position:CGPointMake(329, 500)//436)
@@ -60,6 +60,7 @@
         //flash
 
         //定时器
+        /*
         timer = [NSTimer scheduledTimerWithTimeInterval:1.76
                                                  target:self
                                                selector:@selector(liuye:)
@@ -83,60 +84,45 @@
                       option:UIViewAnimationOptionAllowAnimatedContent
          ];
 
+        sf=[[iSequenceFrameView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+        sf.animationView.image=[UIImage imageNamed:@"idx_1.png"];
+        [self addSubview:sf];
+        sf.delegate=self;
+        sf.time = 1.0/30.0;
+    
+    
+    
+    NSMutableArray *testArray=[NSMutableArray array];
+    [testArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                          @"idx_",@"fileName",
+                          @"1",@"dir",
+                          @"0",@"startFrame",
+                          @"abc",@"endPlace",
+                          @"png",@"type",nil]];
+    
+    [sf setStepArray:testArray];
         
         btnv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
         [self addSubview:btnv];
-        
+        */
         
         //出菜单
         
         [self showMenu];
-        
-        /*UIImageView *ball = [self addImageView:self
-                                        image:@"et_ball.png"
-                                     position:CGPointMake(389, 668)
-                            ];
-        ball.center = CGPointMake(ball.center.x - 100, ball.center.y);
-        ball.transform = CGAffineTransformMakeRotation(10);
-        ball.alpha = 0;
-        
-        UIImageView *dog = [self addImageView:self
-                                        image:@"et_dog.png"
-                                     position:CGPointMake(360, 668)
-                            ];
-        dog.alpha = 0;
-        dog.center = CGPointMake(dog.center.x + 30, dog.center.y);
-        
-        [UIView animateWithDuration:2
-                              delay:.5
-                            options:UIViewAnimationOptionAllowAnimatedContent
-                         animations:^{
-                             ball.center = CGPointMake(ball.center.x + 100, ball.center.y);
-                             ball.transform = CGAffineTransformMakeRotation(0);
-                             ball.alpha = 1;
-                         }completion:^(BOOL finished) {
-                             [UIView animateWithDuration:.5
-                                              animations:^{
-                                                  dog.alpha = 1;
-                                                  dog.center = CGPointMake(dog.center.x - 30, dog.center.y);
-                                              }
-                              ];
-                         }
-         ];*/
-    }
+       }
     return self;
 }
 
 -(void)liuye:(NSTimer *)theTimer{
  
     
-    if (! sf){
+   // if (! sf){
         sf=[[iSequenceFrameView alloc] initWithFrame:CGRectMake(0, 0, 1024, 300)];
         sf.animationView.image=[UIImage imageNamed:@"indx_1.png"];
         [self addSubview:sf];
         sf.delegate=self;
         sf.time = 1.0/30.0;
-    }
+   // }
     
   
         NSMutableArray *testArray=[NSMutableArray array];

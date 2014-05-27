@@ -1,37 +1,35 @@
 //
-//  v_qna.m
+//  wrongQuestion.m
 //  tcxly
 //
-//  Created by Terry on 13-5-5.
-//  Copyright (c) 2013年 Terry. All rights reserved.
+//  Created by user on 14-5-19.
+//  Copyright (c) 2014年 Terry. All rights reserved.
 //
 
-#import "v_qna.h"
-#import "v_unit.h"
-#import "v_score.h"
-#import "v_shop.h"
-#import "v_level.h"
+#import "wrongQuestion.h"
 #import "UIView+iTextManager.h"
-#import "ASIHTTPRequest.h"
-#import "ASIFormDataRequest.h"
-#import "NSObject+SBJson.h"
+#import "UIView+iAnimationManager.h"
+#import "v_unit.h"
 #import "MainViewController.h"
-#import "v_qna_caogao.h"
 
-@implementation v_qna
+@implementation wrongQuestion
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        
-        timenum = 3;
-        
         postAnswerArr = [NSMutableArray array];
         postIDArr = [NSMutableArray array];
         
         [self addBackground:@"bg.png"];
+        [self addButton:self
+                  image:@"back.png"
+               position:CGPointMake(30, 30)
+                    tag:8888
+                 target:self
+                 action:@selector(backClick:)
+         ];
         
         qnav = [[UIView alloc]initWithFrame:self.frame];
         [self addSubview:qnav];
@@ -40,13 +38,6 @@
         [self addSubview:qupv];
         qupv.alpha = 0;
         
-        backbtn = [self addButton:self
-                            image:@"back.png"
-                         position:CGPointMake(30, 30)
-                              tag:8888
-                           target:self
-                           action:@selector(backClick:)
-                   ];
         qua = [self addImageView:qnav image:@"qna_ui.png" position:CGPointMake(175, 0)];
         lrtxt = [self addLabel:qnav
                          frame:CGRectMake(275, 40, 50, 32)
@@ -64,24 +55,10 @@
                              color:[UIColor colorWithRed:81.f/255.f green:244.f/255.f blue:233.f/255.f alpha:1]
                                tag:8002];
         
-        //时间
-        
-        [self addImageView:qnav
-                     image:@"qua_time.png"
-                  position:CGPointMake(540, 25)];
-        timetxt = [self addLabel:qnav
-                           frame:CGRectMake(620, 43, 100, 32)
-                            font:[UIFont systemFontOfSize:25]
-                            text:@"00:00"
-                           color:[UIColor colorWithRed:81.f/255.f green:244.f/255.f blue:233.f/255.f alpha:1]
-                             tag:5670
-                   ];
-        
-        [self addTapEvent:timetxt target:self action:@selector(pauseClick:)];
-        
+               
         [self addButton:qnav
                   image:@"qna_submit.png"
-               position:CGPointMake(865, 27)
+               position:CGPointMake(895, 27)
                     tag:5000
                  target:self
                  action:@selector(tjClick:)
@@ -119,160 +96,107 @@
                  action:@selector(queClick:)
          ];
         
-        [self addQupAnyThing];
-        
-        
         
         cg=[[v_qna_caogao alloc] initWithFrame:CGRectMake(452, 90, 463, 680)];
         [self addSubview:cg];
         
         cg.hidden=YES;
         cg.userInteractionEnabled=NO;
+
         
     }
-    return self;
+    
+     return self;
 }
 
+-(void)wrong_answers{
 
-//pause
--(void)pauseClick:(UIGestureRecognizer*)e {
-    // NSLog(@"pause timer");
+   NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
     
-    if(timenum <= 0) {
-        return;
-    }
+  NSURL * url = [NSURL URLWithString:[NSString stringWithFormat:@"http://gifted-center.com/api/exams/wrong_answers.json?auth_token=%@&grade_id=%d",token,2]];
     
-    if(timer) {
-        timenum --;
-        [timer invalidate];
-        timer = nil;
-        UIView *mskmc = [[UIView alloc] initWithFrame:self.frame];
-        mskmc.tag = 909090;
-        mskmc.alpha = .5;
-        [self addSubview:mskmc];
-        mskmc.backgroundColor = [UIColor blackColor];
-        [self addTapEvent:mskmc target:self action:@selector(startClick:)];
-        timetxt.text = @"暂停";
-    }
-}
-
--(void)startClick:(UIGestureRecognizer*)e {
-    [[self viewWithTag:909090] removeFromSuperview];
-    timer=[NSTimer scheduledTimerWithTimeInterval:1
-                                           target:self
-                                         selector:@selector(update)
-                                         userInfo:nil
-                                          repeats:YES];
+    NSLog(@"url = %@",url);
     
-    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-}
-
--(void)update
-{
-    timeall = timeall - 1 > 0 ? timeall - 1 : 0;
-    timetxt.text = [self getTime];
-}
-
--(NSString*)getTime {
-    
-    int imin = (int)(timeall / 60);
-    int isec = (int)(timeall % 60);
-    
-    NSString *min = [NSString stringWithFormat:@"%@%d", imin < 10 ? @"0" : @"", imin];
-    NSString *sec = [NSString stringWithFormat:@"%@%d", isec < 10 ? @"0" : @"", isec];
-    
-    NSString *addTime = [NSString stringWithFormat:@"%@:%@", min, sec];
-    
-    return addTime;
-}
-
--(void)ansClick:(UIGestureRecognizer*)e {
-    
-    //    UILabel *lb = (UILabel*)[self viewWithTag:e.tag + 500];
-    
-    for (int i = 0; i < 4; i++) {
-        UIButton *btn = (UIButton*)[self viewWithTag:7000 + i];
-        if(btn.tag == e.view.tag + 2000) {
-            btn.alpha = 1;
-            [postAnswerArr replaceObjectAtIndex:questionID withObject:[NSString stringWithFormat:@"%d", i]];
-            [postIDArr replaceObjectAtIndex:questionID withObject:[NSNumber numberWithInt:i]];
-        }else {
-            btn.alpha = .3;
-        }
-    }
-    
-    [self updateQuestionState];
-}
-
--(void)loadCurrentPage:(int)cmd {
-    NSString *str = [NSString stringWithFormat:@"http://gifted-center.com/api/units/%d.json", cmd];
-    NSURL *url = [NSURL URLWithString:str];
     request = [ASIHTTPRequest requestWithURL:url];
-    request.tag = 60005;
     [request setDelegate:self];
     [request setRequestMethod:@"GET"];
+    request.timeOutSeconds=60;
     [request startAsynchronous];
-    
-    UIActivityIndicatorView *loginLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleWhiteLarge];
-    [loginLoading setCenter:CGPointMake(self.frame.size.width / 2, self.frame.size.height/2)];
-    loginLoading.tag = 9991;
-    [self addSubview:loginLoading];
-    [loginLoading startAnimating];
+    request.tag=4001;
+
 }
 
-#pragma mark –
-#pragma mark 请求完成 requestFinished
 
-- (void)requestFailed:(ASIHTTPRequest *)req
+- (void)requestFailed:(ASIHTTPRequest *)r
 {
-    NSError *error = [req error];
-    NSLog(@"login:%@",error);
     
-    [self clearUnuseful];
-    
+    NSError *error = [r error];
+    NSLog(@":%@",error);
+ 
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                        message:@"网络无法连接, 请检查网络并重试."
+                                                        message:@"网络不给力，稍后在试用"
                                                        delegate:self
-                                              cancelButtonTitle:@"重试"
-                                              otherButtonTitles:@"好", nil];
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil];
     [alertView show];
-    
 }
 
--(void)clearUnuseful {
-    UIActivityIndicatorView *loginLoading = (UIActivityIndicatorView*)[self viewWithTag:9991];
-    [loginLoading stopAnimating];
-    [loginLoading removeFromSuperview];
-    [[self viewWithTag:9992] removeFromSuperview];
+
+- (void)requestFinished:(ASIHTTPRequest *)request
+{
+
+    NSError *error = nil;
+    NSData *jsonData = [request responseData];
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
+    NSDictionary * dic = (NSDictionary * )jsonObject;
+    [self readInfo:dic];
+
 }
 
 -(void)readInfo:(NSDictionary*)qlist {
-    
-    questionList = [[qlist objectForKey:@"question_groups"][0] objectForKey:@"question_line_items"];
-    NSLog(@"--> %@", questionList);
-    
+
+    NSArray *op = [NSArray array];
+    op = [qlist objectForKey:@"wrong_answers"];
+    NSLog(@"op=%@",op);
+    if([op count]==0){return;}
+    questionList =[[NSMutableArray alloc]init ];
+    questions = [[NSMutableArray alloc]init ];
+
+    for (int i =0; i<[op count]; i++) {
+         NSLog(@"i=%d,count=%d",i ,[op count]);
+        
+        NSDictionary  * dic = [[NSDictionary alloc]init] ;
+        dic = [[op objectAtIndex:i] valueForKey:@"wrong_answer"];
+
+        NSDictionary * question_line_item =[[NSDictionary alloc]init];
+        question_line_item = [dic valueForKey:@"question_line_item"];
+        [questionList addObject:question_line_item];
+
+       /* NSDictionary * ques =[[NSDictionary alloc]init];
+        ques = [question_line_item valueForKey:@"question"];
+ 
+        
+        NSDictionary * oparr =[[NSDictionary alloc]init];
+        oparr = [ques valueForKey:@"single_choice_options"];
+
+        */
+    }
+
+    NSLog(@"wrong_answer=%@",questionList);
     
     questionID = 0;
+ //   unitid = [[[op objectAtIndex:0] objectForKey:@"id"] integerValue];
+   // NSLog(@"unitId =%d",unitid);
     
-    unitid = [[qlist objectForKey:@"id"] integerValue];
-    NSLog(@"unitId =%d",unitid);
+    questions = [[NSDictionary alloc]init];
+    questions = [[questionList objectAtIndex:0] objectForKey:@"question"];
+    NSLog(@"questions =%@",questions);
     
-    timeall = [[qlist objectForKey:@"exam_minutes"] integerValue] * 60;
-    
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                        message:@"开始做题目了, 准备好了么?"
-                                                       delegate:self
-                                              cancelButtonTitle:@"开始"
-                                              otherButtonTitles:nil];
-    alertView.tag = 9609;
-    [alertView show];
-    
-    NSDictionary *questions = [[NSDictionary alloc]init];
-    questions = [questionList[questionID] objectForKey:@"question"];
-    NSArray *oparr = [NSArray array];
+    NSArray *oparr = [[NSArray alloc] init];
     oparr = [questions objectForKey:@"single_choice_options"];
-    
+
     opnum = [oparr count];
+    NSLog(@"opum =%d",opnum);
     // a b c d
     for (int i = 0; i < opnum; i++) {
         
@@ -291,7 +215,6 @@
         
         
         [self addTapEvent:ansview target:self action:@selector(ansClick:)];
-        
         UIImageView *btn =[self addImageView:ansview
                                        image:[NSString stringWithFormat:@"qna_%d.png", i+1]
                                     position:CGPointMake(0,0)
@@ -305,7 +228,7 @@
         UILabel *alb = [self addLabel:ansview
                                 frame:CGRectMake(80, 10, 500, 32)
                                  font:[UIFont systemFontOfSize:32]
-                                 text:[oparr[i] objectForKey:@"content"]
+                                 text:[oparr[0] objectForKey:@"content"]
                                 color:[UIColor blackColor]
                                   tag:7500 + i
                         ];
@@ -317,19 +240,7 @@
         [postIDArr addObject:[NSNumber numberWithInt:-1]];
     }
     //当前题目编号
-    /*
-     qnumtxt = [self addLabel:qua
-     frame:CGRectMake(215, 183, 80, 60)
-     font:[UIFont fontWithName:@"Gretoon" size:40]
-     text:@""
-     color:[UIColor colorWithRed:85.f/255.f green:107.f/255.f blue:131.f/255.f alpha:1]
-     tag:12001
-     ];
-     qnumtxt.shadowOffset=CGSizeMake(0, 1);
-     qnumtxt.shadowColor=[UIColor whiteColor];
-     qnumtxt.textAlignment = NSTextAlignmentCenter;
-     
-     */
+
     quetxt = [self addLabel:qua
                       frame:CGRectMake(255, 185, 300, 50)
                        font: [UIFont boldSystemFontOfSize:50]
@@ -360,21 +271,21 @@
 
 -(void)setQuestion {
     
+    
     anstxt.text = [postAnswerArr objectAtIndex:questionID];
-    NSDictionary *questions = [[NSDictionary alloc]init];
-    questions = [questionList[questionID] objectForKey:@"question"];
+
     qnumtxt.text = [NSString stringWithFormat:@"%d :", questionID + 1];
     quetxt.text = [NSString stringWithFormat:@"%@", [questions objectForKey:@"subject"]];
     
     for (int i = 0; i < opnum; i++) {
         UIButton *btn = (UIButton*)[self viewWithTag:7000 + i];
         UILabel *ub = (UILabel*)[self viewWithTag:7500 + i];
-        ub.text = [NSString stringWithFormat:@"%@", [[questions objectForKey:@"single_choice_options"][i] objectForKey:@"content"]];
+        ub.text = [NSString stringWithFormat:@"%@", [questionList[i] objectForKey:@"content"]];
         if(i == [postIDArr[questionID] integerValue]) {
             btn.alpha = 1;
         }else {
             
-            btn.alpha = .3;
+            btn.alpha = .7;
             
             
         }
@@ -395,32 +306,18 @@
         
     }
     
-    NSString *imgurl = [questions objectForKey:@"thumb_image_url"];
+    /*NSString *imgurl = [questions objectForKey:@"thumb_image_url"];
     if(imgurl) {
         
         NSData *imageData = [[NSData alloc]initWithContentsOfURL:[NSURL URLWithString:imgurl]];
         UIImage *image=[[UIImage alloc] initWithData:imageData];
         UIImageView *imgview = [[UIImageView alloc]initWithImage:image];
         [imgv addSubview:imgview];
-    }
-}
-
--(void)backClick:(UIButton*)e {//此处应返回到试卷界面
-    
-    [self fadeOutView: self duration:.5];
-    
+    }*/
 }
 
 
--(void)zongtimu:(UIButton*)e {
-    
-    backbtn.alpha = 0;
-    [UIView animateWithDuration:.5
-                     animations:^{
-                         qupv.alpha = 1;
-                     }
-     ];
-}
+
 
 -(void)queClick:(UIButton*)e {
     if(e.tag == 3001) {
@@ -433,54 +330,7 @@
     [self setQuestion];
 }
 
--(void)panClick:(UIButton*)e {
-    
-    NSLog(@"草稿来了, 修改下");
-    
-    
-    [cg loadCurrentPage:e.tag - 4000+1];
-    cg.hidden=NO;
-    cg.userInteractionEnabled=YES;
-    
-    //
-    //    if(!cg) {
-    //        //cg=[[v_qna_caogao alloc] initWithFrame:CGRectMake(452, 90, 463, 680)];
-    //
-    //
-    //    }else {
-    //        [cg loadCurrentPage:e.tag - 4000];
-    //    }
-}
-
--(void)clearcaogao {
-    cg = nil;
-}
-
-//------qup anything
-
--(void)addQupAnyThing {
-    
-    UIImageView *bgd = [self addImageView:qupv
-                                    image:@"qp_wh.png"
-                                 position:CGPointMake(0, 0)];
-    bgd.frame = CGRectMake(0, 0, 1024, 672);
-    
-    sv = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 1024, 672)];
-    [qupv addSubview:sv];
-}
-
--(void)setcurunit:(int)i {
-    
-    UIImageView *ut = (UIImageView*)[self viewWithTag:1000 + i];
-    UIImageView *board = (UIImageView*)[self viewWithTag:8787];
-    board.center = ut.center;
-    board.alpha = 1;
-}
-
--(void)utClick:(UIGestureRecognizer*)e {
-    [self setcurunit:e.view.tag - 1000];
-}
-
+/*
 -(void)loadInfo:(NSMutableDictionary *)arr {
     
     NSArray *question_groups = [[NSArray alloc]init];
@@ -538,8 +388,7 @@
         [sv setContentSize:CGSizeMake(1024, (i + 1) * 80)];
     }
 }
-
-//设置是否已经答题
+*/
 
 -(void)updateQuestionState {
     UIView *hasAnswerTxt = [self viewWithTag:2000 + questionID];
@@ -548,18 +397,9 @@
     curlabel.alpha = 1;
 }
 
--(void)txtClick:(UIGestureRecognizer*)e {
-    [UIView animateWithDuration:.5
-                     animations:^{
-                         qupv.alpha = 0;
-                         backbtn.alpha = 1;
-                     }
-     ];
-    questionID = e.view.tag - 2000;
-    [self setQuestion];
-}
+/*
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
 
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if(alertView.tag == 9502) {
         if(buttonIndex == 0) [self uploadAnswer];
     }else if(alertView.tag == 9609) {
@@ -573,8 +413,11 @@
     }else if(alertView.tag == 9501) {
         if(buttonIndex == 0) [self uploadAnswer];
     };
-}
 
+
+}*/
+
+/*
 -(void)tjClick:(UIButton*)e {
     
     
@@ -593,7 +436,9 @@
                                                   otherButtonTitles:@"继续做题",nil];
         alertView.tag = 9501;
         [alertView show];
-    }else if(doneQue < [postAnswerArr count] - 1) {
+    }
+    else if(doneQue < [postAnswerArr count] - 1)
+    {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
                                                             message:@"题目还没有全部做完, 是否提交答卷?"
                                                            delegate:self
@@ -601,102 +446,47 @@
                                                   otherButtonTitles:@"继续做题", nil];
         alertView.tag = 9502;
         [alertView show];
-    }else {
+    }else
+    {
         [self uploadAnswer];
     }
 }
 
--(void)setLoading {
-    UIView *ldv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
-    ldv.tag = 9997;
-    ldv.backgroundColor = [UIColor blackColor];
-    [self addSubview:ldv];
-    ldv.alpha = .5;
+-(void)queClick:(UIButton*)e {
+    if(e.tag == 3001) {
+        questionID = questionID - 1 < 0 ? 0 : questionID - 1;
+    }else {
+        questionID = questionID + 1 >= [questionList count] - 1 ? [questionList count] - 1 : questionID + 1;
+    }
+    lrtxt.text = [NSString stringWithFormat:@"%d",questionID+1];
     
-    UIActivityIndicatorView *loginLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleWhiteLarge];
-    [loginLoading setCenter:CGPointMake(self.frame.size.width / 2, self.frame.size.height/2)];
-    loginLoading.tag = 9991;
-    [self addSubview:loginLoading];
-    [loginLoading startAnimating];
-    
-    UILabel *txt = [self addLabel:self
-                            frame:CGRectMake(0, 0, 200, 100)
-                             font:[UIFont systemFontOfSize:18]
-                             text:@"正在提交..."
-                            color:[UIColor whiteColor]
-                              tag:9992
-                    ];
-    txt.shadowColor = [UIColor blackColor];
-    txt.textAlignment = UITextAlignmentCenter;
-    txt.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height/2 + 50);
+   // [self setQuestion];
 }
 
-//
-// 提交数据
-//
-
--(void)uploadAnswer {
-    if(timer) {
-        [timer invalidate];
-        timer = nil;
-    }
-    
-    [self setLoading];
-    
-    NSMutableArray *postDic = [[NSMutableArray alloc]init];
-    
-    for (int i = 0; i < [postAnswerArr count]; i++) {
-        
-        int queid = [postIDArr[i] integerValue];
-        NSLog(@"queid = %d", queid);
-        
-        NSArray *opdic = [[questionList[i] objectForKey:@"question"] objectForKey:@"single_choice_options"];
-        if(queid != -1) {
-            [postDic addObject:[NSDictionary dictionaryWithObjectsAndKeys:[questionList[i] objectForKey:@"id"], @"question_line_item_id", [opdic[queid] objectForKey:@"id"], @"option_id", nil]];
-        }
-    }
-    NSMutableDictionary *exams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:unitid], @"unit_id", @"2013-07-13T00:12:30+08:00", @"started_at", @"2013-07-13T00:12:40+08:00", @"stopped_at", postDic, @"answers_attributes", nil];
-    
-    NSMutableDictionary *finalDic = [NSMutableDictionary dictionaryWithObject:exams forKey:@"exam"];
-    
-    NSString *newjson = [finalDic JSONRepresentation];
-    
-    
-    NSString *token=[[NSUserDefaults standardUserDefaults]  objectForKey:@"token"];
-    
-    NSURL *url2 = [NSURL URLWithString:[NSString stringWithFormat:@"http://gifted-center.com/api/exams.json?auth_token=%@",token]];
-    
-    ASIFormDataRequest *req = [ASIFormDataRequest requestWithURL:url2];
-    
-    req.tag = 60002;
-    
-    [req addRequestHeader:@"User-Agent" value:@"ASIHTTPRequest"];
-    [req addRequestHeader:@"Content-Type" value:@"application/json"];
-    [req appendPostData:[newjson dataUsingEncoding:NSUTF8StringEncoding]];
-    [req setRequestMethod:@"POST"];
-    [req setDelegate:self];
-    [req startAsynchronous];
-}
-
-- (void)requestFinished:(ASIHTTPRequest *)req
+*/
+-(void)backClick:(UIButton*)sender
 {
-    [self clearUnuseful];
     
-    NSData *jsonData = [req responseData];
-    NSError *error = nil;
-    id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
-    NSLog(@"json=%@",jsonObject);
-    NSDictionary *deserializedDictionary = (NSDictionary *)jsonObject;
+    [self.superview fadeOutView:self duration:.5];
     
-    if(req.tag == 60005) {
-        [self readInfo:deserializedDictionary];
-        [self loadInfo:deserializedDictionary];
-        return;
-    }
-    v_score *vs = [[v_score alloc]initWithFrame:self.frame];
-    [self.superview fadeInView:self withNewView:vs duration:.5];
-    [vs loadCurrentPage:[[deserializedDictionary objectForKey:@"id"] integerValue]];
-    [vs sendAnswer:postIDArr];
 }
+
+
+-(void)panClick:(UIButton*)e {
+    
+    NSLog(@"草稿来了, 修改下");
+    
+    
+    [cg loadCurrentPage:e.tag - 4000+1];
+    cg.hidden=NO;
+    cg.userInteractionEnabled=YES;
+
+}
+
+
+-(void)clearcaogao {
+    cg = nil;
+}
+
 
 @end

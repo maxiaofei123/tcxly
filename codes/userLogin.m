@@ -23,7 +23,7 @@
         // Initialization code
         
         [self addBackground:@"login_bg.png"];
-     
+        
     }
     return self;
 }
@@ -32,37 +32,37 @@
 -(void)loadCurrentPage:(int)cmd
 {
     
-   UserName=[self addTextField:self
-                         frame:CGRectMake(414, 270, 357, 35)
-                           font:[UIFont systemFontOfSize:15]
-                          color:[UIColor blackColor]
+    UserName=[self addTextField:self
+                          frame:CGRectMake(414, 319, 207, 35)
+                           font:[UIFont systemFontOfSize:25]
+                          color:[UIColor whiteColor]
                     placeholder:@"请输入用户昵称"
-                           tag:1000];
-   
+                            tag:1000];
+    
     UserName.delegate = self;
-
+    
     
     Password=[self addTextField:self
-                          frame:CGRectMake(414, 325, 357, 35)
-                           font:[UIFont systemFontOfSize:15]
-                          color:[UIColor blackColor]
+                          frame:CGRectMake(414, 370, 207, 35)
+                           font:[UIFont systemFontOfSize:25]
+                          color:[UIColor whiteColor]
                     placeholder:@"请输入密码"
                             tag:1000];
-
+    
     
     Password.delegate= self;
     Password.secureTextEntry = YES;
     
     [self addButton:self
               image:@"login_dl.png"
-           position:CGPointMake(424, 447)
+           position:CGPointMake(394, 454)
                 tag:2000
              target:self
              action:@selector(onLoginDown:)];
     
     [self addButton:self
               image:@"login_reg.png"
-           position:CGPointMake(650, 262)
+           position:CGPointMake(650, 307)
                 tag:2001
              target:self
              action:@selector(onRegDown:)];
@@ -74,7 +74,7 @@
              target:self
              action:@selector(backClick:)
      ];
-
+    
 }
 
 
@@ -93,7 +93,7 @@
 -(void)onRegDown:(id*)sender
 {
     NSLog(@"user onRegDown...");
-
+    
     registChooseSex *ur = [[registChooseSex alloc]initWithFrame:self.frame];
     
     [ur loadCurrentPage:0];
@@ -101,7 +101,7 @@
     [self.superview fadeInView:self
                    withNewView:ur
                       duration:.5];
-
+    
 }
 
 
@@ -113,7 +113,7 @@
     
     //开始提交
     NSString *msg=@"ok";
-       
+    
     if(UserName.text.length==0)
     {
         msg=@"请输入用户名";
@@ -122,30 +122,30 @@
     else if(Password.text.length==0)
     {
         msg=@"请输入密码";
-    }  
+    }
     
     
     if ([msg isEqualToString:@"ok"])
     {
- 
-       HUD = [[MBProgressHUD alloc] initWithView:self];
-       [self addSubview:HUD];
         
-       HUD.labelText = @"正在提交，请稍等...";
-       [HUD show:YES ];
+        HUD = [[MBProgressHUD alloc] initWithView:self];
+        [self addSubview:HUD];
+        
+        HUD.labelText = @"正在提交，请稍等...";
+        [HUD show:YES ];
         NSString *ss=[NSString stringWithFormat:@"http://gifted-center.com/users/sign_in.json?user[login]=%@&user[password]=%@",UserName.text,Password.text];
-
+        
         NSLog(@"通过验证，可提交 url=%@",ss);
         NSURL *url = [NSURL URLWithString:[ss stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-
+        
         ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
         
         [request setRequestMethod:@"POST"];
         [request setDelegate:self];
         [request startAsynchronous];
         
-    
-  
+        
+        
     }
     else
     {
@@ -158,7 +158,7 @@
         [alertView show];
         
     }
-   
+    
 }
 //请求回调 ---------------------------------------------------------------------------------------------------
 
@@ -167,11 +167,11 @@
     [HUD hide:YES];
     //提取头像来源信息
     NSError *error;
-
+    
     NSLog(@"userlogin requestFinished...%@",[request responseString]);
     
     NSData *jsonData = [request responseData];
-
+    
     //解析JSon
     NSString * flag = @"0";
     [[NSUserDefaults standardUserDefaults] setObject:flag
@@ -186,7 +186,7 @@
                                                   forKey:@"token"];
         [[NSUserDefaults standardUserDefaults] setObject:[jsonObject objectForKey:@"avatar_id"]
                                                   forKey:@"avatar"];
-
+        
         
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
@@ -216,7 +216,7 @@
 
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
-        
+    
     [HUD hide:YES];
     NSError *error = [request error];
     NSLog(@"ruserlogin:%@",error);

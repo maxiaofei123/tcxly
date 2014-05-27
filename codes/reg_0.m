@@ -14,7 +14,6 @@
 #import "ASIFormDataRequest.h"
 #import "registChooseSex.h"
 #import "userLogin.h"
-#import "uploadPhoto.h"
 #import "v_enter.h"
 #import "SBJson.h"
 
@@ -46,7 +45,7 @@ extern UIImage *scaleImage;
     
     im.userInteractionEnabled=YES;
     
-      avatar= [self addButtonWithImageView:im
+    avatar= [self addButtonWithImageView:im
                                    image:@"avatar_null.jpg"
                                highlight:Nil
                                 position:CGPointMake(237, 75)
@@ -54,9 +53,9 @@ extern UIImage *scaleImage;
                                   action:@selector(onSelect:)];
     
     
-    [self addButton:self
+    [self addButton:im
               image:@"reg_qr.png"
-           position:CGPointMake(427, 648)
+           position:CGPointMake(224, 476)
                 tag:1001
              target:self
              action:@selector(onDown:)
@@ -73,7 +72,7 @@ extern UIImage *scaleImage;
     UserName=[self addTextField:im
                           frame:CGRectMake(233, 315, 200, 30)
                            font:[UIFont systemFontOfSize:25]
-                          color:[UIColor blackColor]
+                          color:[UIColor whiteColor]
                     placeholder:@"输入昵称"
                             tag:1100];
     
@@ -83,7 +82,7 @@ extern UIImage *scaleImage;
     Password=[self addTextField:im
                           frame:CGRectMake(233, 361, 200, 30)
                            font:[UIFont systemFontOfSize:25]
-                          color:[UIColor blackColor]
+                          color:[UIColor whiteColor]
                     placeholder:@"输入6-10位密码"
                             tag:1101];
     Password.secureTextEntry = YES;
@@ -94,7 +93,7 @@ extern UIImage *scaleImage;
     ConfirmPassword=[self addTextField:im
                                  frame:CGRectMake(233, 412, 200, 30)
                                   font:[UIFont systemFontOfSize:25]
-                                 color:[UIColor blackColor]
+                                 color:[UIColor whiteColor]
                            placeholder:@"确认密码"
                                    tag:1102];
     ConfirmPassword.secureTextEntry = YES;
@@ -104,25 +103,27 @@ extern UIImage *scaleImage;
     NSLog(@"%f",im.center.y);
     
     UIKIT_EXTERN NSString *const UITextFieldTextDidBeginEditingNotification;
-
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     
-
+    
 }
+
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     
-   
+    
     [UIView animateWithDuration:.5
                      animations:^{
                          im.center=CGPointMake(im.center.x, 100);
                      }];
     
 }
+
 
 - (void)keyboardWillHide:(NSNotification *)notif {
     
@@ -142,6 +143,7 @@ extern UIImage *scaleImage;
     return YES;
 }
 
+
 - (void)requestFailed:(ASIHTTPRequest *)req
 { [HUD hide:YES];
     NSError *error = [req error];
@@ -158,12 +160,14 @@ extern UIImage *scaleImage;
     
 }
 
+
 -(void)clearUnuseful {
     UIActivityIndicatorView *loginLoading = (UIActivityIndicatorView*)[self viewWithTag:9991];
     [loginLoading stopAnimating];
     [loginLoading removeFromSuperview];
     [[self viewWithTag:9992] removeFromSuperview];
 }
+
 
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
@@ -178,30 +182,11 @@ extern UIImage *scaleImage;
     NSDictionary * url= [user objectForKey:@"avatar"];
     NSString * iurl = [url objectForKey:@"url"];
     NSString * aid_id =[[NSString alloc]initWithFormat:@"%@",[Dic objectForKey:@"avatar_id"]];
-    if([iurl isEqualToString:@"/images/fallback/default.png" ]){
-        
-        [[NSUserDefaults standardUserDefaults] setObject:@"0"
-                                                  forKey:@"flag"];
-        
-    }
-    else{
-        if([aid_id isEqualToString:@"0"])
-        {
-            [[NSUserDefaults standardUserDefaults] setObject:@"0"
-                                                      forKey:@"flag"];
-        }else{
-            [[NSUserDefaults standardUserDefaults] setObject:@"1"
-                                                      forKey:@"flag"];}
-        //下载头像
-        UIImageView * imageV;
-        [imageV setImageWithURL:iurl];
-        [[NSUserDefaults standardUserDefaults] setObject:iurl forKey:@"URL"];
-        
-    }
+    
     
     switch (request.tag) {
             
-        //注册功能回调
+            //注册功能回调
         case 8000:
         {
             
@@ -211,7 +196,7 @@ extern UIImage *scaleImage;
             //解析JSon
             NSError *error = nil;
             NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
-
+            
             BOOL success = [[jsonObject objectForKey:@"success"] boolValue];
             
             if (success){
@@ -219,14 +204,14 @@ extern UIImage *scaleImage;
                 //注册成功并保存token
                 NSString *token=[jsonObject objectForKey:@"auth_token"];
                 NSString *classNO = [user objectForKey:@"class_no"];
-             
+                
                 [[NSUserDefaults standardUserDefaults] setObject:token
                                                           forKey:@"token"];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:classNO
                                                           forKey:@"class_no"];
-
-                              //记录帐户信息
+                
+                //记录帐户信息
                 
                 id aa=[[NSUserDefaults standardUserDefaults] objectForKey:@"accountArray"];
                 
@@ -344,15 +329,9 @@ extern UIImage *scaleImage;
         
         //开始注册
         
-        NSString * test=[[NSUserDefaults standardUserDefaults]objectForKey:@"flag"];
-        NSLog(@"test =%@",test);
-        if ([test isEqualToString:@"1"]) {
-            aid =@"0";
-        }
-
         NSMutableData *data = [[NSMutableData alloc]init];
         data = UIImagePNGRepresentation(scaleImage);
-
+        
         NSString *sex=[[NSUserDefaults standardUserDefaults] objectForKey:@"sex"];
         
         NSString *s=[NSString stringWithFormat:@"http://gifted-center.com/users.json?user[username]=%@&user[password]=%@&user[password_confirmation]=%@&user[email]=12311%d@kingaxis.com&user[gender]=%@&user[avatar_id]=%@",
@@ -361,8 +340,8 @@ extern UIImage *scaleImage;
                      ConfirmPassword.text,
                      (1 + (arc4random() % (10000-1 + 1))),
                      sex,
-                    [[NSUserDefaults standardUserDefaults] objectForKey:@"avatar"]];
-      
+                     [[NSUserDefaults standardUserDefaults] objectForKey:@"avatar"]];
+        
         NSURL *url = [NSURL URLWithString:[s stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         NSLog(@"reg url =%@",url);
         regRequest = [ASIFormDataRequest requestWithURL:url];
@@ -400,21 +379,21 @@ extern UIImage *scaleImage;
 
 -(void)updateAvatar:(UIImage * )image
 {
-
-      avatar.image= image;
-       an =@"1";
-
+    
+    avatar.image= image;
+    an =@"1";
+    
 }
 
 -(void)updateAvatar
 {
     an=  [[NSUserDefaults standardUserDefaults] objectForKey:@"avatar"];
-        
+    
     if(!an||[an isKindOfClass:[NSNull class]])
     {
         an=@"0";
     }
-        
+    
     avatar.image=[UIImage imageNamed:[NSString stringWithFormat:@"avatar_%@.jpg",an]];
     
 }
@@ -430,19 +409,18 @@ extern UIImage *scaleImage;
 {
     registChooseSex *re = [[registChooseSex alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
     [self.superview fadeInView:self
-                   withNewView:re 
+                   withNewView:re
                       duration:.5];
     
 }
 
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-
+    
     if(alertView.tag ==90){
         
-            reg_1 *up = [[reg_1 alloc]initWithFrame:self.frame];
-            [self.superview fadeInView:self withNewView:up duration:.5];
-            [up loadCurrentPage:0];
+        [self showList];
+        
     }
 }
 
@@ -451,4 +429,14 @@ extern UIImage *scaleImage;
     [[NSNotificationCenter defaultCenter]removeObserver:self ];
     
 }
+
+-(void)showList {
+    v_enter *ve = [[v_enter alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    [self.superview fadeInView:self
+                   withNewView:ve
+                      duration:.5
+     ];
+    
+}
+
 @end
