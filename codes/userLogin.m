@@ -110,7 +110,11 @@
 {
     NSLog(@"登入...............");
     
-    
+    if (1) {
+        v_enter *up = [[v_enter alloc]initWithFrame:self.frame];
+        [self.superview fadeInView:self withNewView:up duration:.5];
+        [up loadCurrentPage:0];
+    }else{
     //开始提交
     NSString *msg=@"ok";
     
@@ -157,6 +161,7 @@
                                                   otherButtonTitles:nil];
         [alertView show];
         
+    }
     }
     
 }

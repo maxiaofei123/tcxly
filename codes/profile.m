@@ -37,7 +37,7 @@ extern NSData *data;
         
         //头像
         avatar=[self addButtonWithImageView:pa
-                                      image:@"avatar_null.jpg"
+                                      image:@"avatar_1.jpg"
                                   highlight:nil
                                    position:CGPointMake(20, 112)
                                           t:3000
@@ -74,6 +74,7 @@ extern NSData *data;
                           placeholder:nil
                                   tag:1000];
         username.delegate = self;
+        username.text = @"李明";
         //年月日
         year= [self addTextField:pa
                            frame:CGRectMake(310, 265, 93, 30)
@@ -83,7 +84,7 @@ extern NSData *data;
                              tag:1200];
         year.delegate=self;
         
-        
+        year.text = @"1999";
         month=[self addTextField:pa
                            frame:CGRectMake(417, 265, 79, 30)
                             font:[UIFont systemFontOfSize:25]
@@ -91,6 +92,7 @@ extern NSData *data;
                      placeholder:nil
                              tag:1201];
         month.delegate=self;
+        month.text = @"11";
         
         
         day=[self addTextField:pa
@@ -101,10 +103,18 @@ extern NSData *data;
                            tag:1202];
         day.delegate=self;
         
+        day.text = @"04";
+        
         
         year.keyboardType=UIKeyboardTypeNumberPad;
         month.keyboardType=UIKeyboardTypeNumberPad;
         day.keyboardType=UIKeyboardTypeNumberPad;
+        
+        fm = @"f";
+        ChooseSex= [self addImageView:pa
+                                image:@"profile_ch.png"
+                             position:CGPointMake(387, 183)];
+        fm =@"f";
         
         /*[UIView animateWithDuration:1
          animations:^{

@@ -71,6 +71,10 @@
         
         vhand = [self addImageView:self image:@"ut_hand.png" position:CGPointMake(900, 660)];
         vhand.alpha = 0;
+        NSArray * arr ;
+        
+        [self loadInfo:arr idx:2];
+        
         
     }
     
@@ -277,14 +281,14 @@
     stages = [arr[cmd] objectForKey:@"stages"];
     
     
-    int mapcount = [[arr[cmd] objectForKey:@"pictures"] count];
+    int mapcount = 2;//[[arr[cmd] objectForKey:@"pictures"] count];
     
     NSString *imgurl = @"";
-    if(mapcount > 0) {
-        imgurl = [[arr[cmd] objectForKey:@"pictures"][mapcount - 1] objectForKey:@"image_url"];
-    }
-    if(imgurl) {
-        
+//    if(mapcount > 0) {
+//        imgurl = [[arr[cmd] objectForKey:@"pictures"][mapcount - 1] objectForKey:@"image_url"];
+//    }
+//    if(imgurl) {
+    
         //NSData *imageData = [[NSData alloc]initWithContentsOfURL:[NSURL URLWithString:imgurl]];
         //UIImage *image=[[UIImage alloc] initWithData:imageData];
         
@@ -309,10 +313,10 @@
                                                 
                                             }];
                        }];
-    }
+//    }
     //地图
-    for (int i = 0; i < [stages count]; i++) {
-        NSArray *pos=[stages[i] objectForKey:@"map_places"];
+    for (int i = 0; i < 2; i++) {
+        NSArray *pos;//[stages[i] objectForKey:@"map_places"];
         
         if(pos.count==0){
             
@@ -488,7 +492,7 @@
     
     [self clearPoint:cid];
     
-    int allnum = [[stages[cid + 1] objectForKey:@"units"] count];
+    int allnum = 5;///[[stages[cid + 1] objectForKey:@"units"] count];
     
     
     for(UIView *sview in uv.subviews) {

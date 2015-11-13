@@ -43,6 +43,92 @@
                  target:self
                  action:@selector(backClick:)];
         
+        UIScrollView *sv = [[UIScrollView alloc]initWithFrame:CGRectMake(115, 225, 745, 510)];
+        [self addSubview:sv];
+        [sv setContentSize:CGSizeMake(745, 130*10)];
+
+        NSArray * namr = @[@"王梅",@"蒋琴",@"董晓霜",@"王天丽",@"李明宇",@"张兰",@"乐乐",@"小明",@"艾希",@"马东",@"郭敬明"];
+        
+        NSArray * core = @[@"100",@"99.8",@"97.6",@"95",@"93",@"92.5",@"92",@"92",@"90",@"86",@"80"];
+        
+        for (int i=1; i<10; i++) {
+            
+//            id aid=[[rank objectAtIndex:i] objectForKey:@"avatar_id"];
+            
+            
+            UIView *txt = [[UIView alloc]initWithFrame:CGRectMake(0,  i *130, 745, 130)];
+            txt.tag = 2000 + i;
+            [sv addSubview:txt];
+            
+            [self addImageView:txt
+                         image:@"qp_line.png"
+                      position:CGPointMake(0, 130)
+             ];
+            
+            
+            
+            
+//            if(aid && ![aid isKindOfClass:[NSNull class]])
+//            {
+//                im=[self addImageView:txt
+//                                image:[NSString stringWithFormat:@"avatar_%@.jpg",aid]
+//                             position:CGPointMake(20, 10)];
+//            }
+//            else
+//            {
+                im=[self addImageView:txt
+                                image:[NSString stringWithFormat:@"avatar_%d.jpg",i]
+                             position:CGPointMake(20, 10)];
+//            }
+            
+            
+            CGRect f=im.frame;
+            f.size.width=f.size.height=110;
+            im.frame=f;
+            
+            
+            //名字
+            UILabel *un=[self addLabel:txt
+                                 frame:CGRectMake(161, 40, 180, 50)
+                                  font:[UIFont boldSystemFontOfSize:20]
+                                  text:[namr objectAtIndex:i]
+                                 color:[UIColor blackColor]
+                                   tag:0];
+            
+            un.textAlignment=UITextAlignmentCenter;
+            
+            
+            
+            //成绩
+            un=[self addLabel:txt
+                        frame:CGRectMake(317,  40, 100, 50)
+                         font:[UIFont fontWithName:@"Gretoon" size:24]
+                         text:[core objectAtIndex:i]
+                        color:[UIColor colorWithRed:85.f/255.f green:107.f/255.f blue:131.f/255.f alpha:1]
+                          tag:0];
+            
+            un.textAlignment=UITextAlignmentCenter;
+            
+            
+            
+            
+            //排名
+            
+            un = [self addLabel:txt
+                          frame:CGRectMake(465, 40, 100, 50)
+                           font:[UIFont fontWithName:@"Gretoon" size:24]
+                           text:[NSString stringWithFormat:@"第%d名", i + 1]
+                          color:[UIColor colorWithRed:85.f/255.f green:107.f/255.f blue:131.f/255.f alpha:1]
+                            tag:0];
+            un.shadowOffset=CGSizeMake(0, 1);
+            
+            un.shadowColor=[UIColor whiteColor];
+            
+            un.textAlignment=UITextAlignmentCenter;
+            
+            
+    
+        }
 
         
     }

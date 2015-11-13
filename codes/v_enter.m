@@ -109,6 +109,7 @@
         //出菜单
         
         [self showMenu];
+
        }
     return self;
 }
@@ -278,15 +279,23 @@
         //没有登入过得，去登入
         NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
 
-        if(token == Nil){
-            
-            [self user_Login];
-        
-        }
-        else {
+//        if(token == Nil){
+//        
+//            [self user_Login];
+//        
+//        }
+//        else {
         
             [self showList];
-        }
+        v_unit *vs = [[v_unit alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
+//        vs.delegate=self;   
+//        
+//        [self.superview.superview fadeInView:vs
+//                                    duration:.5
+//         ];
+
+//        }
+
 
     }
 }

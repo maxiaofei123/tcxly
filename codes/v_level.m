@@ -27,8 +27,31 @@
         
         [self addBackground:@"lv_black.png"];
         
-        [self readInfo];
-       // [self showInfo];
+//        [self readInfo];
+
+        [self showInfo];
+        
+//        for(int i =2;i<6;i++){
+//                UIButton *bt ;
+//                UIImage *btBg=[UIImage imageNamed:[NSString stringWithFormat:@"lv-000%d.png",i-1]];
+//                NSLog(@"i=%d",i);
+//                bt=[UIButton buttonWithType: UIButtonTypeCustom];
+//                bt.frame=CGRectMake(0,0,btBg.size.width,btBg.size.height);
+//                [bt setBackgroundImage:btBg forState:UIControlStateNormal];
+//                bt.tag = 8000 + index;
+//                
+//                //添加事件
+//                [bt addTarget:self action:@selector(onMenuDown:)
+//             forControlEvents:UIControlEventTouchUpInside];
+//            
+//            [self addButton:self
+//                      image:[NSString stringWithFormat:@"lv-000%d.png",i-1]
+//                   position:CGPointMake(0,0)
+//                        tag:1000
+//                     target:self
+//                     action:@selector(onDown:)];
+//            }
+//        
     }
     return self;
 }
@@ -74,7 +97,7 @@
     
     items = [NSMutableArray array];
 
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < 5; i++)
     {
         [items addObject:[NSNumber numberWithInt:i]];
     }
@@ -117,6 +140,9 @@
                     ];
     
     m1.alpha = m2.alpha = 0;
+    
+//    [carousel addSubview:m1];
+//    [carousel addSubview:m2];
 }
 
 #pragma mark –
@@ -169,7 +195,7 @@
     NSError *error = nil;
     id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
     
-   // NSLog(@"Successfully deserialized  request =%@",[r responseString]);
+    NSLog(@"Successfully deserialized  request =%@",[r responseString]);
     
     
     NSDictionary *deserializedDictionary = (NSDictionary *)jsonObject;
@@ -213,22 +239,22 @@
     for(int i =2;i<6;i++){
         if (view == nil)
         {
-            UIImage *btBg=[UIImage imageNamed:[NSString stringWithFormat:@"lv-000%d.png",index+2]];
-            NSLog(@"i=%d",i);
+            UIImage *btBg=[UIImage imageNamed:[NSString stringWithFormat:@"lv-000%d.png",i-1]];
+           
             bt=[UIButton buttonWithType: UIButtonTypeCustom];
             bt.frame=CGRectMake(0,0,btBg.size.width,btBg.size.height);
-            [bt setBackgroundImage:btBg forState:UIControlStateNormal];
-            bt.tag = 8000 + [[allArray[index] objectForKey:@"id"] integerValue];
+            [bt setImage:btBg forState:UIControlStateNormal];
+            bt.tag = 8000 + index;
         
-            /* UILabel *ub = [self addLabel:bt
+            UILabel *ub = [self addLabel:bt
                                 frame:CGRectMake(0, 47, 438, 27)
                                 font:[UIFont systemFontOfSize:30]
-                                text:[NSString stringWithFormat:@"%@", [allArray[index] objectForKey:@"name"]]
+                                text:@"kkkkkk"
                                color:[UIColor blackColor]
                                  tag:7878
                        ];
-             */
-            // ub.textAlignment = UITextAlignmentCenter;
+            
+             ub.textAlignment = UITextAlignmentCenter;
        
             //添加事件
             [bt addTarget:self action:@selector(onMenuDown:)
@@ -266,9 +292,7 @@
         }
     }
     
-    
 }
-
 
 
 -(void)onMenuDown:(UIButton*)sender
@@ -276,9 +300,9 @@
     NSInteger index = [carousel indexOfItemView:sender];
    // NSLog(@"grade_id = %d",sender.tag - 8000);
     
-    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", index]
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)index]
                                               forKey:@"menuid"];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", sender.tag - 8000]
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", sender.tag - 8000]
                                               forKey:@"grade_id"];
     
     v_unit *vs = [[v_unit alloc]initWithFrame:CGRectMake(0, 0, 1024, 768)];
@@ -286,11 +310,6 @@
     
     [vs loadInfo:allArray idx:index];
     
-    
-//    [self.superview.superview fadeInView:self.superview
-//                   withNewView:vs
-//                      duration:.5
-//     ];
     
     [self.superview.superview fadeInView:vs
                                 duration:.5
